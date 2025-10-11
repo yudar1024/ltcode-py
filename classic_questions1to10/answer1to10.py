@@ -1,4 +1,5 @@
 import collections
+from typing import List
 
 
 class Solution:
@@ -37,9 +38,106 @@ class Solution:
             count += (1 if num == candidate else -1)
         return candidate
     # 多数元素1
-    def majorityElement1(self, nums: List[int]) -> int:
+    def majorityElement1(self, nums: list[int]) -> int:
         """
         Find the majority element in `nums`.
         """
         counts = collections.Counter(nums)
         return max(counts.keys(), key=counts.get)
+
+    def rotate(self, nums: list[int], k: int) -> None:
+        """
+        Do not return anything, modify nums in-place instead.
+        """
+        k %= len(nums)
+        print(k)
+        print(nums[-k:])
+        print(nums[:-k])
+        nums[:] = nums[-k:] + nums[:-k]
+        return nums
+    
+    def maxProfit(self, prices: List[int]) -> int:
+        """
+        Find the maximum profit that can be achieved from `prices`.
+        """
+        max_profit = 0
+        min_price = prices[0]
+        for price in prices:
+            min_price = min(min_price, price)
+            max_profit = max(max_profit, price - min_price)
+        return max_profit
+
+    def maxProfit2(self, prices: List[int]) -> int:
+        """
+        Find the maximum profit that can be achieved from `prices`.
+        """
+        max_profit = 0
+        for i in range(1, len(prices)):
+            if prices[i] > prices[i - 1]:
+                max_profit += prices[i] - prices[i - 1]
+        return max_profit
+    
+    def canJump(self, nums: List[int]) -> bool:
+        """
+        Determine if you can reach the last index of `nums`.
+        """
+        # max_reachable = 0
+        # for i, jump in enumerate(nums):
+        #     print(i, jump, max_reachable)
+        #     if i > max_reachable:
+        #         return False
+        #     max_reachable = max(max_reachable, i + jump)
+        # return True
+        # 解法二 计算两个相邻数之差，如果前一个数大于后一个数，则跳跃长度增加差值，如果相等且不为0，则跳跃长度加1，否则跳跃长度增加前一个数与后一个数的差值，最后判断跳跃长度是否大于等于数组长度减1
+        jump_length = 0
+        for i in range(1,len(nums) - 1):
+            if nums[i] > nums[i-1]:
+                jump_length += nums[i]-nums[i-1]
+            elif nums[i] == nums[i-1] and nums[i] != 0 and nums[i-1] != 0:
+                jump_length += 1
+            else:
+                jump_length += nums[i-1]-nums[i]
+        if jump_length >= len(nums) - 1:
+            return True
+        else:
+            return False
+
+    def jump(self, nums: List[int]) -> int:
+        """
+        Find the minimum number of jumps to reach the last index of `nums`.
+        """
+        # 跳跃次数
+        jumps = 0
+        current_end = 0
+        # 当前index能跳跃的最远距离
+        farthest = 0
+        # 遍历数组，除了最后一个元素，因为最后一个元素是目标，不需要跳跃
+        for i in range(len(nums) - 1):
+        # 更新max_reach，记录当前index+i能跳跃的最远距离
+            farthest = max(farthest, i + nums[i])
+           # 如果当前index等于current_end，说明当前index是一个跳跃点，需要跳跃，数组自身保证了一定能到达最后一个元素
+            if i == current_end:
+                jumps += 1
+                # 更新current_end，记录下一个跳跃点的最远距离
+                current_end = farthest
+        return jumps
+
+
+    def hIndex(self, citations: List[int]) -> int:
+        """
+        Calculate the h-index from `citations`.
+        """
+        # 论文总数
+        n = len(citations)
+        buckets = [0] * (n + 1)
+        for c in citations:
+            if c >= n:
+                buckets[n] += 1
+            else:
+                buckets[c] += 1
+        count = 0
+        for i in range(n, -1, -1):
+            count += buckets[i]
+            if count >= i:
+                return i
+        return 0
