@@ -1,4 +1,5 @@
 import collections
+from random import random
 from typing import List
 
 
@@ -129,6 +130,7 @@ class Solution:
         """
         # 论文总数
         n = len(citations)
+        # 创建桶
         buckets = [0] * (n + 1)
         for c in citations:
             if c >= n:
@@ -141,3 +143,40 @@ class Solution:
             if count >= i:
                 return i
         return 0
+    
+class RandomizedSet:
+    """ RandomizedSet data structure that supports insert, remove, and getRandom operations in average O(1) time. """
+
+    def __init__(self): 
+        """
+        Initialize your data structure here.
+        """
+        self.num_to_index = {}
+        self.nums = []
+
+        
+
+    def insert(self, val: int) -> bool:
+        if val in self.num_to_index:
+            return False
+        self.num_to_index[val] = len(self.nums)
+        self.nums.append(val)
+        return True
+
+        
+        
+
+    def remove(self, val: int) -> bool:
+        if val not in self.num_to_index:
+            return False
+        index = self.num_to_index[val]
+        last_element = self.nums[-1]
+        self.nums[index] = last_element
+        self.num_to_index[last_element] = index
+        self.nums.pop()
+        del self.num_to_index[val]
+        return True
+
+
+    def getRandom(self) -> int:
+        return self.nums[int(random() * len(self.nums))]
